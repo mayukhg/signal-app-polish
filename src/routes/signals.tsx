@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { signals, type Signal } from "@/lib/mock-data";
+import { MissionControl } from "@/components/mission-control";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -201,6 +202,7 @@ function SignalsPage() {
           </h3>
         </div>
         <div className="space-y-4 p-4">
+          <MissionControl domainId="health-tech" />
           <RailRow icon={GitBranch} label="Affected roadmap items" value="4" />
           <RailRow icon={ShieldAlert} label="Sentinel risk" value="Medium" tone="warn" />
           <RailRow icon={Clock} label="SLA to decide" value="6h 12m" />
