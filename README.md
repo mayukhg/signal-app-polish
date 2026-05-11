@@ -135,15 +135,54 @@ src/
 
 ---
 
-## Local development
+## Run locally — any platform, zero accounts
 
 ```bash
-bun install
-bun dev
+git clone <this-repo>
+cd signal-app-polish
 ```
 
-Then open http://localhost:5173. No backend setup required — the mock data
-source is in-process.
+### Quick start (recommended)
+
+```bash
+# macOS / Linux
+./scripts/start.sh
+./scripts/stop.sh
+
+# Windows
+scripts\start.bat
+scripts\stop.bat
+```
+
+The start script checks Node ≥ 20, installs deps with `bun` / `pnpm` / `npm`
+(whichever is on your PATH), seeds `.env` from `.env.example`, and launches
+the dev server on http://localhost:5173. State is kept in `.run/` so the
+stop script can cleanly shut it down.
+
+### Manual
+
+```bash
+npm install   # or: bun install / pnpm install
+npm run dev
+```
+
+### Pick a backend (optional)
+
+The app is platform-agnostic. Choose a data driver via `.env`:
+
+| Driver  | `VITE_DATA_DRIVER` | Persistence            | Extra env             |
+|---------|--------------------|------------------------|-----------------------|
+| Memory  | `memory` (default) | In-process, resets     | —                     |
+| Local   | `local`            | Browser localStorage   | —                     |
+| REST    | `rest`             | Your own HTTP server   | `VITE_API_BASE_URL`   |
+
+Adding your own backend = implement the `DataSource` interface in
+`src/lib/data/source.ts` (one file, ~12 methods) and register it in the
+`pickDriver()` switch. UI components never change.
+
+The REST driver expects the endpoints documented at the top of
+`src/lib/data/rest-source.ts` — it's a thin contract you can stand up in
+any language (Node, Python, Go, …).
 
 ---
 
@@ -151,11 +190,12 @@ source is in-process.
 
 - [x] Mock-backed UI for all five surfaces
 - [x] Agent orchestration engine ported from `mayukhg/my-signals-app`
-- [x] Cloud-ready `DataSource` seam
-- [ ] Enable Lovable Cloud → swap in `SupabaseDataSource`
-- [ ] Realtime mission log via `supabase.channel(...)`
-- [ ] Public webhook (`/api/public/scout-webhook`) for real Scout ingest
-- [ ] Multi-tenant: per-workspace domain configs with RLS
+- [x] Platform-agnostic `DataSource` registry (memory / local / rest)
+- [x] One-command startup/shutdown scripts (sh + bat)
+- [ ] Optional Supabase / Postgres adapter
+- [ ] Reference REST backend (Node + SQLite) under `examples/`
+- [ ] Public webhook for real Scout ingest
+- [ ] LLM provider seam (`mock` / `openai` / `anthropic` / `ollama`)
 
 ---
 
