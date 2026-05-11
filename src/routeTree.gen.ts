@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignalsRouteImport } from './routes/signals'
+import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as PrototypesRouteImport } from './routes/prototypes'
+import { Route as ConfigRouteImport } from './routes/config'
+import { Route as AuditsRouteImport } from './routes/audits'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SignalsRoute = SignalsRouteImport.update({
+  id: '/signals',
+  path: '/signals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadmapRoute = RoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrototypesRoute = PrototypesRouteImport.update({
+  id: '/prototypes',
+  path: '/prototypes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfigRoute = ConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditsRoute = AuditsRouteImport.update({
+  id: '/audits',
+  path: '/audits',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,96 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audits': typeof AuditsRoute
+  '/config': typeof ConfigRoute
+  '/prototypes': typeof PrototypesRoute
+  '/roadmap': typeof RoadmapRoute
+  '/signals': typeof SignalsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audits': typeof AuditsRoute
+  '/config': typeof ConfigRoute
+  '/prototypes': typeof PrototypesRoute
+  '/roadmap': typeof RoadmapRoute
+  '/signals': typeof SignalsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/audits': typeof AuditsRoute
+  '/config': typeof ConfigRoute
+  '/prototypes': typeof PrototypesRoute
+  '/roadmap': typeof RoadmapRoute
+  '/signals': typeof SignalsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/audits'
+    | '/config'
+    | '/prototypes'
+    | '/roadmap'
+    | '/signals'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/audits' | '/config' | '/prototypes' | '/roadmap' | '/signals'
+  id:
+    | '__root__'
+    | '/'
+    | '/audits'
+    | '/config'
+    | '/prototypes'
+    | '/roadmap'
+    | '/signals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuditsRoute: typeof AuditsRoute
+  ConfigRoute: typeof ConfigRoute
+  PrototypesRoute: typeof PrototypesRoute
+  RoadmapRoute: typeof RoadmapRoute
+  SignalsRoute: typeof SignalsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signals': {
+      id: '/signals'
+      path: '/signals'
+      fullPath: '/signals'
+      preLoaderRoute: typeof SignalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadmap': {
+      id: '/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof RoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prototypes': {
+      id: '/prototypes'
+      path: '/prototypes'
+      fullPath: '/prototypes'
+      preLoaderRoute: typeof PrototypesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/config': {
+      id: '/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audits': {
+      id: '/audits'
+      path: '/audits'
+      fullPath: '/audits'
+      preLoaderRoute: typeof AuditsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +151,22 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuditsRoute: AuditsRoute,
+  ConfigRoute: ConfigRoute,
+  PrototypesRoute: PrototypesRoute,
+  RoadmapRoute: RoadmapRoute,
+  SignalsRoute: SignalsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
